@@ -100,6 +100,56 @@ export function Segmented<T extends string>({
   );
 }
 
+/**
+ * Fila de chips: en pantallas medianas/grandes se acomodan en varias líneas (todas visibles);
+ * en el teléfono se deslizan horizontalmente con el dedo, la rueda del mouse o arrastrando.
+ */
+export function ChipRow({ className, children }: { className?: string; children: React.ReactNode }) {
+  const ref = React.useRef<HTMLDivElement>(null);
+  const drag = React.useRef<{ x: number; left: number; moved: boolean } | null>(null);
+
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      if (el.scrollWidth <= el.clientWidth || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+      e.preventDefault();
+      el.scrollLeft += e.deltaY;
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      className={cn("no-scrollbar flex cursor-grab gap-2 overflow-x-auto active:cursor-grabbing md:flex-wrap md:overflow-visible md:cursor-auto", className)}
+      onPointerDown={(e) => {
+        if (e.pointerType !== "mouse" || !ref.current) return;
+        drag.current = { x: e.clientX, left: ref.current.scrollLeft, moved: false };
+      }}
+      onPointerMove={(e) => {
+        const d = drag.current;
+        if (!d || !ref.current) return;
+        const dx = e.clientX - d.x;
+        if (Math.abs(dx) > 4) d.moved = true;
+        ref.current.scrollLeft = d.left - dx;
+      }}
+      onPointerUp={() => setTimeout(() => (drag.current = null), 0)}
+      onPointerLeave={() => (drag.current = null)}
+      onClickCapture={(e) => {
+        // evitar que un arrastre active un chip
+        if (drag.current?.moved) {
+          e.stopPropagation();
+          e.preventDefault();
+        }
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
 /** Chip de filtro */
 export function Chip({ active, className, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement> & { active?: boolean }) {
   return (

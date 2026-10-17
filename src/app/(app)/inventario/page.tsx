@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Field, Input, MoneyInput, NativeSelect, Textarea } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogBody, DialogContent, DialogFooter } from "@/components/ui/dialog";
-import { Chip, EmptyState, PageHeader, Skeleton, Table } from "@/components/ui/misc";
+import { Chip, ChipRow, EmptyState, PageHeader, Skeleton, Table } from "@/components/ui/misc";
 import { exportCSV } from "@/lib/csv";
 import type { Movement, Product } from "@/lib/types";
 import { cn, errorMessage, fmtDateTime, localISODate, num, qty, rd } from "@/lib/utils";
@@ -123,13 +123,13 @@ function InventoryView() {
               <Button variant="ghost" size="icon" onClick={() => { setProduct(null); router.replace("/inventario"); }} aria-label="Quitar filtro"><X /></Button>
             )}
           </div>
-          <div className="no-scrollbar flex gap-2 overflow-x-auto">
+          <ChipRow>
             <Chip active={type === "all"} onClick={() => setType("all")}>Todos</Chip>
             {(Object.keys(TYPE_META) as Movement["type"][]).map((t) => {
               const M = TYPE_META[t];
               return <Chip key={t} active={type === t} onClick={() => setType(t)}><M.icon /> {M.label}</Chip>;
             })}
-          </div>
+          </ChipRow>
         </div>
 
         {current && (

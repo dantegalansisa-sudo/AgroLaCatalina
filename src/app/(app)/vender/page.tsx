@@ -16,7 +16,7 @@ import { ReceiptActions } from "@/components/app/receipt-actions";
 import { Button } from "@/components/ui/button";
 import { Input, MoneyInput, Label, Textarea } from "@/components/ui/input";
 import { Dialog, DialogBody, DialogContent, DialogFooter } from "@/components/ui/dialog";
-import { Chip, EmptyState, Kbd, Segmented, Skeleton } from "@/components/ui/misc";
+import { Chip, ChipRow, EmptyState, Kbd, Segmented, Skeleton } from "@/components/ui/misc";
 import { fetchSale } from "@/lib/receipt";
 import type { Customer, PaymentMethod, Product, SaleFull } from "@/lib/types";
 import { cn, errorMessage, normalize, num, qty, rd, round2 } from "@/lib/utils";
@@ -455,7 +455,7 @@ function POS() {
             </Button>
           </div>
 
-          <div className="no-scrollbar -mx-4 mt-3 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0">
+          <ChipRow className="-mx-4 mt-3 px-4 pb-1 sm:mx-0 sm:px-0">
             <Chip active={cat === "all"} onClick={() => setCat("all")}>
               <Layers /> Todos <span className="opacity-60">{products.filter((p) => p.active).length}</span>
             </Chip>
@@ -467,7 +467,7 @@ function POS() {
                 </Chip>
               );
             })}
-          </div>
+          </ChipRow>
 
           <div className="scrollbar-thin -mx-1 mt-3 min-h-0 flex-1 overflow-y-auto px-1 pb-28 lg:pb-2">
             {catalogLoading ? (

@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input, NativeSelect } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { Chip, EmptyState, PageHeader, Skeleton, Table } from "@/components/ui/misc";
+import { Chip, ChipRow, EmptyState, PageHeader, Skeleton, Table } from "@/components/ui/misc";
 import { Dropdown, DropdownContent, DropdownItem, DropdownTrigger } from "@/components/ui/dropdown";
 import { Dialog, DialogBody, DialogContent, DialogFooter } from "@/components/ui/dialog";
 import { exportCSV, parseCSV } from "@/lib/csv";
@@ -148,13 +148,13 @@ function ProductsView() {
               ))}
             </NativeSelect>
           </div>
-          <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4">
+          <ChipRow className="-mx-4 px-4 md:mx-0 md:px-0">
             {filters.map((f) => (
               <Chip key={f.v} active={filter === f.v} onClick={() => setFilter(f.v)}>
                 <f.icon /> {f.l} {f.n ? <span className="opacity-70">{f.n}</span> : null}
               </Chip>
             ))}
-          </div>
+          </ChipRow>
         </div>
 
         {catalogLoading ? (

@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 import { Input } from "@/components/ui/input";
-import { Chip } from "@/components/ui/misc";
+import { Chip, ChipRow } from "@/components/ui/misc";
 import { addDays, localISODate } from "@/lib/utils";
 
 export type Preset = "hoy" | "ayer" | "7d" | "semana" | "mes" | "30d" | "mesant" | "rango";
@@ -39,12 +39,12 @@ export function DateRangeFilter({ value, onChange, presets = ["hoy", "ayer", "7d
 }) {
   return (
     <div className="flex flex-col gap-2 lg:flex-row lg:items-center">
-      <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 lg:mx-0 lg:px-0">
+      <ChipRow className="-mx-4 px-4 md:mx-0 md:px-0">
         {presets.map((p) => (
           <Chip key={p} active={value.preset === p} onClick={() => onChange({ preset: p, ...presetRange(p) })}>{LABELS[p]}</Chip>
         ))}
         <Chip active={value.preset === "rango"} onClick={() => onChange({ ...value, preset: "rango" })}>Rango…</Chip>
-      </div>
+      </ChipRow>
       {value.preset === "rango" && (
         <div className="flex items-center gap-2">
           <Input type="date" value={value.from} max={value.to} onChange={(e) => onChange({ ...value, from: e.target.value })} className="h-9 w-auto" />
