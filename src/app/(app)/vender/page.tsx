@@ -76,19 +76,21 @@ function ProductCard({ p, inCart, onAdd, disabledReason, category }: {
       </div>
       <p className="mt-2.5 line-clamp-2 text-[13.5px] font-bold leading-snug">{p.name}</p>
       {p.presentation && <p className="truncate text-xs text-muted-foreground">{p.presentation}</p>}
-      <div className="mt-auto flex items-end justify-between gap-2 pt-2.5">
+      <div className="mt-auto flex flex-wrap items-end justify-between gap-x-2 gap-y-0.5 pt-2.5">
         {p.price > 0 ? (
-          <span className="num text-[15px] font-extrabold tracking-tight">{rd(p.price)}</span>
+          <span className="num whitespace-nowrap text-[15px] font-extrabold tracking-tight">{rd(p.price)}</span>
         ) : (
           <span className="inline-flex items-center gap-1 rounded-md bg-warning-soft px-1.5 py-0.5 text-[11px] font-bold text-warning"><Tag className="size-3" />Sin precio</span>
         )}
-        <span className={cn("num text-[11px] font-semibold", p.stock <= 0 ? "text-danger" : low ? "text-warning" : "text-muted-foreground")}>
+        <span className={cn("num whitespace-nowrap text-[11px] font-semibold", p.stock <= 0 ? "text-danger" : low ? "text-warning" : "text-muted-foreground")}>
           {p.stock <= 0 ? "Agotado" : `${qty(p.stock)} disp.`}
         </span>
       </div>
-      <span className="absolute bottom-3 right-3 hidden size-7 place-items-center rounded-lg bg-primary text-white opacity-0 shadow-md transition group-hover:opacity-100 lg:grid">
-        <Plus className="size-4" />
-      </span>
+      {inCart === 0 && (
+        <span className="absolute right-3 top-3 hidden size-7 place-items-center rounded-lg bg-primary text-white opacity-0 shadow-md transition group-hover:opacity-100 lg:grid">
+          <Plus className="size-4" />
+        </span>
+      )}
     </button>
   );
 }
@@ -422,12 +424,12 @@ function POS() {
 
   return (
     <div className="lg:-mb-2 lg:h-[calc(100dvh-6.5rem)]">
-      <div className="grid h-full gap-5 lg:grid-cols-[minmax(360px,420px)_1fr]">
+      <div className="grid h-full gap-5 lg:grid-cols-[320px_minmax(0,1fr)] xl:grid-cols-[380px_minmax(0,1fr)] 2xl:grid-cols-[420px_minmax(0,1fr)]">
         {/* Carrito (escritorio) */}
         <aside className="hidden min-h-0 overflow-hidden rounded-3xl border border-border/70 bg-card shadow-soft lg:block">{cartPanel}</aside>
 
         {/* Productos */}
-        <section className="flex min-h-0 flex-col">
+        <section className="@container flex min-h-0 min-w-0 flex-col">
           <div className="flex gap-2">
             <div className="relative flex-1">
               <Search className="pointer-events-none absolute left-4 top-1/2 size-[18px] -translate-y-1/2 text-muted-foreground" />
@@ -469,13 +471,13 @@ function POS() {
 
           <div className="scrollbar-thin -mx-1 mt-3 min-h-0 flex-1 overflow-y-auto px-1 pb-28 lg:pb-2">
             {catalogLoading ? (
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+              <div className="grid grid-cols-2 gap-3 @lg:grid-cols-3 @3xl:grid-cols-4 @5xl:grid-cols-5">
                 {Array.from({ length: 12 }).map((_, i) => <Skeleton key={i} className="h-[132px] rounded-2xl" />)}
               </div>
             ) : visible.length === 0 ? (
               <EmptyState icon={<PackageX />} title="No se encontraron productos" description={q ? `Nada coincide con “${q}”.` : "No hay productos en esta categoría."} />
             ) : (
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+              <div className="grid grid-cols-2 gap-3 @lg:grid-cols-3 @3xl:grid-cols-4 @5xl:grid-cols-5">
                 {visible.map((p) => (
                   <ProductCard
                     key={p.id}

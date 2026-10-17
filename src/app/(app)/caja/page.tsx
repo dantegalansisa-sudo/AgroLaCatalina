@@ -29,12 +29,12 @@ function SummaryGrid({ s }: { s: CashSummary }) {
       <div className="grid grid-cols-2 gap-3">
         <div className="rounded-2xl bg-muted/50 p-4">
           <p className="text-xs font-semibold text-muted-foreground">Ventas</p>
-          <p className="num mt-1 text-2xl font-extrabold">{rd(s.sales_total)}</p>
+          <p className="num mt-1 whitespace-nowrap text-xl font-extrabold sm:text-2xl">{rd(s.sales_total)}</p>
           <p className="text-xs text-muted-foreground">{s.sales_count} ventas{s.voided_count ? ` · ${s.voided_count} anuladas` : ""}</p>
         </div>
         <div className="rounded-2xl bg-accent-soft p-4">
           <p className="text-xs font-semibold text-accent">Efectivo esperado en caja</p>
-          <p className="num mt-1 text-2xl font-extrabold">{rd(s.expected_cash)}</p>
+          <p className="num mt-1 whitespace-nowrap text-xl font-extrabold sm:text-2xl">{rd(s.expected_cash)}</p>
           <p className="text-xs text-muted-foreground">inicial + efectivo</p>
         </div>
       </div>

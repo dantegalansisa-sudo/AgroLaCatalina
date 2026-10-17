@@ -1,5 +1,7 @@
 // Crea usuarios demo (admin y cajero), 2 clientes y ventas de ejemplo de los últimos 14 días.
-// Uso: node scripts/seed-demo.mjs
+// Uso: node scripts/seed-demo.mjs            (no duplica si ya hay ventas demo)
+//      node scripts/seed-demo.mjs --new-passwords  (regenera las contraseñas demo)
+//      node scripts/seed-demo.mjs --reset    (borra ventas/clientes/cajas, repone stock 10 y regenera relativo a hoy)
 // Las contraseñas se generan al azar y se imprimen UNA vez en consola.
 import fs from "node:fs";
 import crypto from "node:crypto";
@@ -34,11 +36,14 @@ await db.connect();
 
 const creds = [];
 for (const u of users) {
-  const pass = password();
+  let pass = password();
   let id = list.users.find((x) => x.email === u.email)?.id;
   if (id) {
-    const { error } = await admin.auth.admin.updateUserById(id, { password: pass, email_confirm: true });
-    if (error) throw error;
+    // usuarios existentes conservan su contraseña salvo que se pida --new-passwords
+    if (process.argv.includes("--new-passwords")) {
+      const { error } = await admin.auth.admin.updateUserById(id, { password: pass, email_confirm: true });
+      if (error) throw error;
+    } else pass = "(sin cambios)";
   } else {
     const { data, error } = await admin.auth.admin.createUser({
       email: u.email, password: pass, email_confirm: true, user_metadata: { full_name: u.full_name },
@@ -54,6 +59,11 @@ for (const u of users) {
   creds.push({ ...u, id, password: pass });
 }
 
+if (process.argv.includes("--reset")) {
+  await db.query(fs.readFileSync("supabase/seed/clear_demo.sql", "utf8"));
+  await db.query("begin; select set_config('app.stock_ctx','reset',true); update public.products set stock = 10 where true; commit;");
+  console.log("Datos demo anteriores borrados; stock repuesto a 10.");
+}
 await db.query(fs.readFileSync("supabase/seed/demo_data.sql", "utf8"));
 await db.end();
 

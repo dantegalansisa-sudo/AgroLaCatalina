@@ -198,7 +198,7 @@ function ProductsView() {
                           </div>
                         </td>
                         <td>
-                          <span className={cn("text-xs font-semibold", categoryStyle(c).text)}>{c?.name ?? "—"}</span>
+                          <span className={cn("whitespace-nowrap text-xs font-semibold", categoryStyle(c).text)}>{c?.name ?? "—"}</span>
                         </td>
                         {isAdmin && (
                           <td className="num text-right">
@@ -208,7 +208,7 @@ function ProductsView() {
                                 {margin != null && <p className={cn("text-[11px]", margin < 0 ? "text-danger" : "text-accent")}>{margin.toFixed(0)}% margen</p>}
                               </div>
                             ) : (
-                              <span className="text-xs text-muted-foreground">Sin costo</span>
+                              <span className="whitespace-nowrap text-xs text-muted-foreground">Sin costo</span>
                             )}
                           </td>
                         )}

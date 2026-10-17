@@ -41,6 +41,8 @@ begin
     foreach v_user in array array[v_cajero, v_admin] loop
       if v_user = v_admin and random() < 0.4 then continue; end if;
       v_open := ((v_local_now::date - v_day) + time '08:00') at time zone tz;
+      -- si hoy todavía no son las 8:00, la caja de hoy abre unas horas antes de ahora
+      if v_open > now() - interval '1 hour' then v_open := now() - interval '3 hours'; end if;
       insert into cash_sessions (user_id, opened_at, opening_amount, is_demo)
       values (v_user, v_open, case when v_user = v_cajero then 2000 else 1000 end, true)
       returning id into v_session;
@@ -49,7 +51,8 @@ begin
       for i in 1..v_n_sales loop
         v_at := v_open + make_interval(mins => floor(random() * 600)::int);
         if v_at > now() then v_at := now() - make_interval(mins => floor(random() * 90)::int); end if;
-        if v_at < v_open then v_at := v_open + interval '5 minutes'; end if;
+        if v_at < v_open then v_at := v_open + make_interval(mins => 5 + floor(random() * 60)::int); end if;
+        if v_at > now() then v_at := now() - interval '2 minutes'; end if;
 
         insert into sales (created_at, user_id, cash_session_id, is_demo)
         values (v_at, v_user, v_session, true) returning id, number into v_sale, v_num;
