@@ -1,0 +1,138 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #f6f5f2;
+  --foreground: #1b1a19;
+  --card: #ffffff;
+  --card-foreground: #1b1a19;
+  --popover: #ffffff;
+  --muted: #efede8;
+  --muted-foreground: #6f6b64;
+  --border: #e7e3dc;
+  --input: #e2ded6;
+  --primary: #c41230;
+  --primary-hover: #a80e28;
+  --primary-foreground: #ffffff;
+  --primary-soft: #fcebee;
+  --accent: #2f7d52;
+  --accent-soft: #e7f2ea;
+  --warning: #b86e00;
+  --warning-soft: #fdf2e0;
+  --danger: #c0262d;
+  --danger-soft: #fdecec;
+  --ring: #c41230;
+  --sidebar: #ffffff;
+  --shadow-color: 30 20 10;
+}
+
+.dark {
+  --background: #0f0f10;
+  --foreground: #ecebe8;
+  --card: #18181a;
+  --card-foreground: #ecebe8;
+  --popover: #1c1c1f;
+  --muted: #232326;
+  --muted-foreground: #9c9893;
+  --border: #2a2a2e;
+  --input: #34343a;
+  --primary: #e2364f;
+  --primary-hover: #f04a62;
+  --primary-foreground: #ffffff;
+  --primary-soft: #3a1820;
+  --accent: #5cbf86;
+  --accent-soft: #15291d;
+  --warning: #f0a53a;
+  --warning-soft: #33250f;
+  --danger: #f05a5f;
+  --danger-soft: #361a1b;
+  --ring: #e2364f;
+  --sidebar: #141416;
+  --shadow-color: 0 0 0;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-soft: var(--primary-soft);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --radius-xl: 0.9rem;
+  --radius-2xl: 1.15rem;
+  --shadow-soft: 0 1px 2px rgb(var(--shadow-color) / 0.04), 0 4px 16px -6px rgb(var(--shadow-color) / 0.08);
+  --shadow-lift: 0 2px 4px rgb(var(--shadow-color) / 0.05), 0 12px 32px -10px rgb(var(--shadow-color) / 0.18);
+  --animate-in: fade-in 0.18s ease-out;
+  --animate-slide-up: slide-up 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+  to { transform: none; }
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-feature-settings: "cv11", "ss01";
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--primary) 22%, transparent);
+  }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+}
+
+@utility scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--input) transparent;
+}
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+@utility num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Impresión de recibos 80 mm ---------- */
+@media print {
+  @page { size: 80mm auto; margin: 0; }
+  html, body { background: #fff !important; color: #000 !important; }
+  .no-print { display: none !important; }
+}
