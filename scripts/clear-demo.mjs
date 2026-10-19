@@ -2,7 +2,7 @@
 // Uso:
 //   node scripts/clear-demo.mjs                 → borra ventas, cajas, clientes, abonos y movimientos
 //   node scripts/clear-demo.mjs --reset-stock   → además pone el stock de todos los productos en 0
-//   node scripts/clear-demo.mjs --users         → además elimina los usuarios demo (@lacatalina.demo)
+//   node scripts/clear-demo.mjs --users         → además elimina los usuarios demo (marcados como demo)
 // Requiere SUPABASE_DB_URL (o SUPABASE_DB_PASSWORD) y SUPABASE_SECRET_KEY en .env.local
 import fs from "node:fs";
 import pg from "pg";
@@ -26,8 +26,8 @@ await db.end();
 
 if (args.has("--users")) {
   const admin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SECRET_KEY, { auth: { persistSession: false } });
-  const { data } = await admin.auth.admin.listUsers({ perPage: 1000 });
-  for (const u of data.users.filter((u) => u.email?.endsWith("@lacatalina.demo"))) {
+  const { data } = await admin.from("profiles").select("id, email").eq("is_demo", true);
+  for (const u of data ?? []) {
     await admin.auth.admin.deleteUser(u.id);
     console.log("✓ Usuario eliminado:", u.email);
   }

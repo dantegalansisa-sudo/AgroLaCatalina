@@ -6,8 +6,8 @@
 do $$
 declare
   tz constant text := 'America/Santo_Domingo';
-  v_admin uuid := (select id from profiles where email = 'admin@lacatalina.demo');
-  v_cajero uuid := (select id from profiles where email = 'cajero@lacatalina.demo');
+  v_admin uuid := (select id from profiles where email = 'admin@lacatalina.app');
+  v_cajero uuid := (select id from profiles where email = 'cajera@lacatalina.app');
   v_c1 uuid; v_c2 uuid;
   v_day int; v_user uuid; v_session uuid; v_sale uuid; v_num bigint;
   v_n_sales int; v_n_items int; i int; j int;

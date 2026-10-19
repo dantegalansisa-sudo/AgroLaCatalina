@@ -33,6 +33,8 @@ Reemplaza el registro en papel: ventas, inventario, fiado, caja y reportes, desd
 - **admin** (dueña): acceso total, ve costos y ganancias, gestiona usuarios, anula ventas.
 - **cajero**: vende, ve productos y stock, maneja clientes/fiado, abre y cierra su caja. No ve costos ni ganancias, no edita precios, solo ve sus propias ventas.
 
+**Entrada sin arroba:** en la pantalla de inicio se escribe solo el *usuario* (ej. `admin`, `cajera`). Internamente se guarda como `usuario@lacatalina.app`, porque Supabase exige un correo; quien tenga un correo real puede entrar con él completo. Al crear usuarios en **Usuarios** también basta con una palabra.
+
 La seguridad está en la base de datos (RLS), no solo en la interfaz:
 costos en `product_costs` y `sale_item_costs` (solo admin), ventas y stock modificados únicamente por funciones `SECURITY DEFINER` (`create_sale`, `void_sale`, `inventory_entry`, …) que validan el rol y recalculan precios en el servidor. Todo usuario nuevo nace **inactivo**; solo la administradora lo activa.
 

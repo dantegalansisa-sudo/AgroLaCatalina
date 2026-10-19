@@ -13,7 +13,7 @@ import { Logo, LogoMark } from "./logo";
 import { CommandPalette } from "./command-palette";
 import { Dropdown, DropdownContent, DropdownItem, DropdownLabel, DropdownSeparator, DropdownTrigger } from "@/components/ui/dropdown";
 import { Kbd, Skeleton } from "@/components/ui/misc";
-import { cn, daysUntil, fmtDate, qty } from "@/lib/utils";
+import { cn, daysUntil, displayUser, fmtDate, qty } from "@/lib/utils";
 
 function greeting() {
   const h = Number(new Intl.DateTimeFormat("en-US", { timeZone: "America/Santo_Domingo", hour: "numeric", hour12: false }).format(new Date()));
@@ -90,7 +90,7 @@ function UserMenu({ compact }: { compact?: boolean }) {
         </button>
       </DropdownTrigger>
       <DropdownContent align={compact ? "end" : "start"} side={compact ? "bottom" : "top"} className="w-60">
-        <DropdownLabel>{profile.email}</DropdownLabel>
+        <DropdownLabel>Usuario: {displayUser(profile.email)}</DropdownLabel>
         <DropdownSeparator />
         <DropdownLabel>Tema</DropdownLabel>
         <div className="grid grid-cols-3 gap-1 px-1 pb-1">

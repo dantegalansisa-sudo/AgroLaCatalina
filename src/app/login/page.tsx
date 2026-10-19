@@ -2,13 +2,14 @@
 import * as React from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Boxes, ChevronRight, Download, Eye, EyeOff, Lock, Mail, MapPin, Monitor, ShoppingCart, Smartphone, Users } from "lucide-react";
+import { ArrowRight, Boxes, ChevronRight, Download, Eye, EyeOff, Lock, UserRound, MapPin, Monitor, ShoppingCart, Smartphone, Users } from "lucide-react";
 import { toast } from "sonner";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { Input, Label } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LogoMark } from "@/components/app/logo";
 import { useInstallPrompt } from "@/hooks/use-install";
+import { toLoginEmail } from "@/lib/utils";
 import fondo from "./fondo.jpg";
 
 const FEATURES = [
@@ -41,10 +42,10 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     const supabase = supabaseBrowser();
-    const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim().toLowerCase(), password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email: toLoginEmail(email), password: password.trim() });
     if (error) {
       setLoading(false);
-      toast.error(/Invalid login/i.test(error.message) ? "Correo o contraseña incorrectos" : error.message);
+      toast.error(/Invalid login/i.test(error.message) ? "Usuario o contraseña incorrectos" : error.message);
       return;
     }
     const { data: prof } = await supabase.from("profiles").select("active").eq("id", data.user.id).single();
@@ -115,10 +116,10 @@ export default function LoginPage() {
 
           <form onSubmit={onSubmit} className="mt-9 space-y-5">
             <div>
-              <Label htmlFor="email" className="text-sm text-[#3a3633]">Correo</Label>
+              <Label htmlFor="email" className="text-sm text-[#3a3633]">Usuario</Label>
               <div className="relative">
-                <Mail className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-[#8a857e]" strokeWidth={1.7} />
-                <Input id="email" type="email" autoComplete="username" required value={email} onChange={(e) => setEmail(e.target.value)} className="h-14 rounded-2xl border-[#e7e3dc] bg-white pl-12 text-[15px] text-[#1b1a19] shadow-[0_1px_2px_rgba(0,0,0,.03)]" placeholder="tu@correo.com" />
+                <UserRound className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-[#8a857e]" strokeWidth={1.7} />
+                <Input id="email" type="text" autoComplete="username" autoCapitalize="none" autoCorrect="off" spellCheck={false} required value={email} onChange={(e) => setEmail(e.target.value)} className="h-14 rounded-2xl border-[#e7e3dc] bg-white pl-12 text-[15px] text-[#1b1a19] shadow-[0_1px_2px_rgba(0,0,0,.03)]" placeholder="Ej. admin" />
               </div>
             </div>
             <div>

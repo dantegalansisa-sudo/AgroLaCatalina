@@ -12,7 +12,7 @@ import { Dialog, DialogBody, DialogContent, DialogFooter } from "@/components/ui
 import { Dropdown, DropdownContent, DropdownItem, DropdownTrigger } from "@/components/ui/dropdown";
 import { EmptyState, PageHeader, Skeleton } from "@/components/ui/misc";
 import type { Profile, Role } from "@/lib/types";
-import { cn, errorMessage, fmtDate } from "@/lib/utils";
+import { cn, displayUser, errorMessage, fmtDate, toLoginEmail } from "@/lib/utils";
 
 function genPassword() {
   const a = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
@@ -85,7 +85,7 @@ export default function UsuariosPage() {
                   <p className="flex items-center gap-2 truncate font-semibold">
                     {u.full_name} {u.id === me?.id && <Badge variant="outline">Tú</Badge>} {u.is_demo && <Badge variant="warning">Demo</Badge>}
                   </p>
-                  <p className="truncate text-xs text-muted-foreground">{u.email} · desde {fmtDate(u.created_at)}</p>
+                  <p className="truncate text-xs text-muted-foreground">Usuario: <b className="font-semibold text-foreground">{displayUser(u.email)}</b> · desde {fmtDate(u.created_at)}</p>
                 </div>
                 <Badge variant={u.role === "admin" ? "primary" : "default"}>{u.role === "admin" ? "Administradora" : "Cajero"}</Badge>
                 <Badge variant={u.active ? "success" : "danger"} className="hidden sm:inline-flex">{u.active ? "Activo" : "Inactivo"}</Badge>
@@ -130,7 +130,7 @@ function CreateUser({ open, onOpenChange, onCreated }: { open: boolean; onOpenCh
     setLoading(true);
     try {
       await api("POST", f);
-      setCreated({ email: f.email, password: f.password });
+      setCreated({ email: displayUser(toLoginEmail(f.email)), password: f.password });
       onCreated();
     } catch (err) {
       toast.error(errorMessage(err));
@@ -146,7 +146,7 @@ function CreateUser({ open, onOpenChange, onCreated }: { open: boolean; onOpenCh
             <DialogBody>
               <p className="text-sm">Usuario creado. Entrégale estos datos para entrar:</p>
               <div className="space-y-2 rounded-2xl bg-muted/60 p-4 font-mono text-sm">
-                <p>Correo: <b>{created.email}</b></p>
+                <p>Usuario: <b>{created.email}</b></p>
                 <p>Contraseña: <b>{created.password}</b></p>
               </div>
               <Button variant="outline" onClick={() => { navigator.clipboard.writeText(`Correo: ${created.email}\nContraseña: ${created.password}`); toast.success("Copiado"); }}>
@@ -159,8 +159,8 @@ function CreateUser({ open, onOpenChange, onCreated }: { open: boolean; onOpenCh
           <form onSubmit={save}>
             <DialogBody>
               <Field label="Nombre completo *"><Input autoFocus value={f.full_name} onChange={(e) => setF({ ...f, full_name: e.target.value })} /></Field>
-              <Field label="Correo *"><Input type="email" value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} placeholder="nombre@correo.com" /></Field>
-              <Field label="Contraseña *" hint="Mínimo 8 caracteres. Se genera una segura automáticamente.">
+              <Field label="Usuario *" hint="Una palabra sin espacios ni arroba, ej. maria. Con eso entra al sistema."><Input value={f.email} onChange={(e) => setF({ ...f, email: e.target.value.toLowerCase().replace(/\s+/g, "") })} placeholder="ej. maria" autoCapitalize="none" /></Field>
+              <Field label="Contraseña *" hint="Mínimo 6 caracteres. Puedes escribir una fácil de recordar.">
                 <div className="flex gap-2">
                   <Input value={f.password} onChange={(e) => setF({ ...f, password: e.target.value })} className="font-mono" />
                   <Button type="button" variant="outline" size="icon" onClick={() => setF({ ...f, password: genPassword() })} aria-label="Generar"><RefreshCw /></Button>
@@ -205,7 +205,7 @@ function PasswordDialog({ user, onClose }: { user: Profile | null; onClose: () =
   return (
     <Dialog open={!!user} onOpenChange={(v) => !v && onClose()}>
       {user && (
-        <DialogContent title="Cambiar contraseña" description={user.email} size="sm">
+        <DialogContent title="Cambiar contraseña" description={`Usuario: ${displayUser(user.email)}`} size="sm">
           <DialogBody>
             <Field label="Nueva contraseña" hint="Se copiará al portapapeles al guardar">
               <div className="flex gap-2">
@@ -216,7 +216,7 @@ function PasswordDialog({ user, onClose }: { user: Profile | null; onClose: () =
           </DialogBody>
           <DialogFooter>
             <Button variant="ghost" onClick={onClose}>Cancelar</Button>
-            <Button onClick={save} loading={loading} disabled={pwd.length < 8}>Guardar</Button>
+            <Button onClick={save} loading={loading} disabled={pwd.length < 6}>Guardar</Button>
           </DialogFooter>
         </DialogContent>
       )}

@@ -2,7 +2,8 @@
 // Uso: node scripts/seed-demo.mjs            (no duplica si ya hay ventas demo)
 //      node scripts/seed-demo.mjs --new-passwords  (regenera las contraseñas demo)
 //      node scripts/seed-demo.mjs --reset    (borra ventas/clientes/cajas, repone stock 10 y regenera relativo a hoy)
-// Las contraseñas se generan al azar y se imprimen UNA vez en consola.
+// Usuarios sin arroba para la pantalla de entrada: "admin" y "cajera" (contraseñas simples de demo).
+// Con --new-passwords se generan contraseñas aleatorias en su lugar.
 import fs from "node:fs";
 import crypto from "node:crypto";
 import pg from "pg";
@@ -26,8 +27,8 @@ function password() {
 }
 
 const users = [
-  { email: "admin@lacatalina.demo", full_name: "Catalina (Dueña)", role: "admin" },
-  { email: "cajero@lacatalina.demo", full_name: "Cajero Demo", role: "cajero" },
+  { email: "admin@lacatalina.app", full_name: "Catalina (Dueña)", role: "admin", simple: "catalina2026" },
+  { email: "cajera@lacatalina.app", full_name: "Cajera", role: "cajero", simple: "cajera2026" },
 ];
 
 const { data: list } = await admin.auth.admin.listUsers({ perPage: 1000 });
@@ -36,7 +37,7 @@ await db.connect();
 
 const creds = [];
 for (const u of users) {
-  let pass = password();
+  let pass = process.argv.includes("--new-passwords") ? password() : u.simple;
   let id = list.users.find((x) => x.email === u.email)?.id;
   if (id) {
     // usuarios existentes conservan su contraseña salvo que se pida --new-passwords
@@ -68,4 +69,4 @@ await db.query(fs.readFileSync("supabase/seed/demo_data.sql", "utf8"));
 await db.end();
 
 console.log("\nUsuarios demo listos:");
-for (const c of creds) console.log(`  ${c.role.padEnd(7)} ${c.email}  →  ${c.password}`);
+for (const c of creds) console.log(`  ${c.role.padEnd(7)} usuario: ${c.email.split("@")[0]}  →  ${c.password}`);

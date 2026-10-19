@@ -105,3 +105,21 @@ export function downloadFile(filename: string, content: BlobPart, type = "text/p
   a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 2000);
 }
+
+/**
+ * Usuarios sin arroba: Supabase necesita un correo, así que un usuario simple
+ * como "admin" se guarda internamente como "admin@lacatalina.app".
+ * Quien tenga un correo real puede seguir entrando con él.
+ */
+export const USER_DOMAIN = "lacatalina.app";
+
+export function toLoginEmail(user: string) {
+  const u = user.trim().toLowerCase().replace(/\s+/g, "");
+  return u.includes("@") ? u : `${u}@${USER_DOMAIN}`;
+}
+
+/** Muestra "admin" en lugar de "admin@lacatalina.app" */
+export function displayUser(email?: string | null) {
+  if (!email) return "";
+  return email.toLowerCase().endsWith("@" + USER_DOMAIN) ? email.slice(0, -(USER_DOMAIN.length + 1)) : email;
+}
